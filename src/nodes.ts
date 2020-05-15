@@ -1,6 +1,6 @@
 import shortid from "shortid";
 
-interface Session {
+export interface Session {
     [variable: string]: number;
 }
 
@@ -23,7 +23,7 @@ export abstract class ComputationNode {
         this.id = shortid.generate();
     }
 
-    protected computeInputs(sess?: Session) {
+    computeInputs(sess?: Session) {
         for (let i = 0; i < this.inputs.length; i++) {
             this.buffer[i] = this.inputs[i].compute(sess);
         }
@@ -35,7 +35,7 @@ export abstract class ComputationNode {
         return this.value;
     }
 
-    protected abstract computeNode(sess?: Session): number;
+    abstract computeNode(sess?: Session): number;
 
     // wrt: with respect to
     gradient(wrt: ComputationNode): number {
@@ -98,7 +98,8 @@ export class VariableNode extends ComputationNode {
             throw new Error(`Unknown value for variable "${this.name}"`);
         }
 
-        return sess[this.name];
+        this.value = sess[this.name];
+        return this.value;
     }
 
     localGradient(idx: number) {
@@ -239,7 +240,7 @@ export class PowerNode extends ComputationNode {
     computeNode(sess?: Session) {
         // TODO: Observe behavior on 0^0
 
-        return Math.pow(this.inputs[0].value, this.inputs[1].value);
+        return Math.pow(this.buffer[0], this.buffer[1]);
     }
 
     localGradient(idx: number) {
@@ -247,26 +248,43 @@ export class PowerNode extends ComputationNode {
             // base
             // x^n => n * x ^ (n - 1)
             return (
-                this.inputs[1].value *
-                Math.pow(this.inputs[0].value, this.inputs[1].value - 1)
+                this.buffer[1] * Math.pow(this.buffer[0], this.buffer[1] - 1)
             );
         } else {
             // exponent
             // a^x => ln(a) * a^x
 
-            if (this.inputs[0].value <= 0)
+            if (this.buffer[0] <= 0)
                 throw new Error(
                     "Cannot calculate power gradient: negative base"
                 );
 
             return (
-                Math.log(this.inputs[0].value) *
-                Math.pow(this.inputs[0].value, this.inputs[1].value)
+                Math.log(this.buffer[0]) *
+                Math.pow(this.buffer[0], this.buffer[1])
             );
         }
     }
 
     toLatex() {
         return `{(${this.inputs[0].toLatex()})}^{${this.inputs[1].toLatex()}}`;
+    }
+}
+
+export class OutputNode extends ComputationNode {
+    constructor(input: ComputationNode) {
+        super(input);
+    }
+
+    computeNode(sess: Session) {
+        return this.buffer[0];
+    }
+
+    localGradient(idx: number) {
+        return 1;
+    }
+
+    toLatex() {
+        return this.inputs[0].toLatex();
     }
 }

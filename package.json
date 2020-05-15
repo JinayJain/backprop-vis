@@ -6,8 +6,8 @@
         "start:dev": "nodemon",
         "exec": "ts-node --",
         "build:ts": "tsc",
-        "build": "webpack -d",
-        "deploy": "webpack -p",
+        "build": "webpack -d -w",
+        "deploy": "webpack -p && gh-pages -d dist",
         "test": "jest --verbose"
     },
     "license": "MIT",
@@ -17,6 +17,7 @@
         "@types/katex": "^0.11.0",
         "@types/node": "^13.13.4",
         "@types/shortid": "^0.0.29",
+        "gh-pages": "^2.2.0",
         "katex": "^0.11.1",
         "nodemon": "^2.0.3",
         "ts-jest": "^25.4.0",

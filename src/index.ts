@@ -2,6 +2,7 @@ import * as ops from "./ops";
 import cytoscape, { ElementDefinition } from "cytoscape";
 import katex from "katex";
 import {
+    Session,
     ComputationNode,
     AdditionNode,
     SubtractionNode,
@@ -10,6 +11,7 @@ import {
     PowerNode,
     ValueNode,
     VariableNode,
+    OutputNode,
 } from "./nodes";
 
 function getLabel(node: ComputationNode) {
@@ -24,9 +26,11 @@ function getLabel(node: ComputationNode) {
     } else if (node instanceof PowerNode) {
         return "^";
     } else if (node instanceof ValueNode) {
-        return node.value.toString();
+        return node.value.toFixed(3);
     } else if (node instanceof VariableNode) {
         return node.name;
+    } else if (node instanceof OutputNode) {
+        return "out";
     } else {
         return "node " + node.id;
     }
@@ -58,6 +62,7 @@ function generateGraph(root: ComputationNode): ElementDefinition[] {
                 data: {
                     target: input.id,
                     source: curr.id,
+                    value: "",
                 },
             });
             nodeQueue.push(input);
@@ -66,12 +71,13 @@ function generateGraph(root: ComputationNode): ElementDefinition[] {
 
     return graph;
 }
-let a = ops.variable("a");
-let comp = ops.add(ops.mul(5, a), ops.div(2, a));
-comp = ops.pow(comp, comp);
-comp = ops.add(comp, 53.542);
 
-const output: HTMLElement = document.getElementById("output")!;
+let variableList: VariableNode[] = [ops.variable("x")];
+let comp = ops.div(
+    1,
+    ops.add(1, ops.pow(Math.E, ops.mul(-1, variableList[0])))
+);
+
 const equation: HTMLElement = document.getElementById("equation")!;
 
 katex.render(comp.toLatex(), equation);
@@ -94,7 +100,9 @@ var cy = cytoscape({
                 "padding-bottom": "20px",
                 label: "data(label)",
                 "font-family": "Libre Caslon Text",
+                // @ts-ignore
                 "text-halign": "center",
+                // @ts-ignore
                 "text-valign": "center",
                 color: "#ffffff",
                 backgroundColor: "#094d92",
@@ -106,13 +114,67 @@ var cy = cytoscape({
         {
             selector: "edge",
             style: {
+                "font-family": "Libre Caslon Text",
+                "source-text-offset": 40,
+                "source-label": "data(value)",
+                // @ts-ignore
+                // "source-text-rotation": "autorotate",
+                "text-background-color": "#ff00ff",
+                "font-size": 25,
+                color: "#ffffff",
                 width: 3,
+                // @ts-ignore
                 "curve-style": "bezier",
+                "control-point-step-size": 150,
                 "line-color": "#3E6680",
+                // @ts-ignore
                 "source-arrow-shape": "triangle",
                 "source-arrow-color": "#4BB3FD",
                 "arrow-scale": 2,
             },
         },
     ],
+});
+
+let variablesElement: HTMLElement = document.getElementById("variables")!;
+variablesElement.innerHTML = variableList
+    .map((varNode) => {
+        return `<li><label for="${varNode.name}">${varNode.name}</label><input value="0" type="number" step="any" id="${varNode.name}-input"></input></li>`;
+    })
+    .join("\n");
+
+const computeForm = document.getElementById("compute") as HTMLFormElement;
+
+computeForm.addEventListener("submit", (e: Event) => {
+    e.preventDefault();
+    let session: Session = {};
+
+    variableList.forEach((varNode) => {
+        const varInput = <HTMLInputElement>(
+            document.getElementById(varNode.name + "-input")
+        );
+
+        session[varNode.name] = parseFloat(varInput.value);
+    });
+
+    let values = new Map<string, number>();
+
+    function compute(node: ComputationNode): number {
+        node.inputs.forEach((child, idx) => {
+            compute(child);
+            node.buffer[idx] = values.get(child.id)!;
+        });
+
+        let value = node.computeNode(session);
+        values.set(node.id, value);
+        return value;
+    }
+
+    let finalValue = compute(comp);
+
+    katex.render(comp.toLatex() + " = " + finalValue.toFixed(5), equation);
+
+    values.forEach((value, id) => {
+        cy.elements(`edge[target = "${id}"]`).data("value", value.toFixed(3));
+    });
 });
