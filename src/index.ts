@@ -14,6 +14,9 @@ import {
     OutputNode,
 } from "./nodes";
 
+const dagre = require("cytoscape-dagre");
+cytoscape.use(dagre);
+
 function getLabel(node: ComputationNode) {
     if (node instanceof AdditionNode) {
         return "+";
@@ -63,6 +66,7 @@ function generateGraph(root: ComputationNode): ElementDefinition[] {
                     target: input.id,
                     source: curr.id,
                     value: "",
+                    grad: "",
                 },
             });
             nodeQueue.push(input);
@@ -116,7 +120,9 @@ var cy = cytoscape({
             style: {
                 "font-family": "Libre Caslon Text",
                 "source-text-offset": 40,
+                "target-text-offset": 40,
                 "source-label": "data(value)",
+                "target-label": "data(grad)",
                 // @ts-ignore
                 // "source-text-rotation": "autorotate",
                 "text-background-color": "#ff00ff",
@@ -139,14 +145,16 @@ var cy = cytoscape({
 let variablesElement: HTMLElement = document.getElementById("variables")!;
 variablesElement.innerHTML = variableList
     .map((varNode) => {
-        return `<li><label for="${varNode.name}">${varNode.name}</label><input value="0" type="number" step="any" id="${varNode.name}-input"></input></li>`;
+        return `<li>
+                    <label for="${varNode.name}">${varNode.name}</label>
+                    <input value="0" type="number" step="any" id="${varNode.name}-input"></input>
+                </li>`;
     })
     .join("\n");
 
-const computeForm = document.getElementById("compute") as HTMLFormElement;
+const computeButton = document.getElementById("compute") as HTMLButtonElement;
 
-computeForm.addEventListener("submit", (e: Event) => {
-    e.preventDefault();
+computeButton.addEventListener("click", () => {
     let session: Session = {};
 
     variableList.forEach((varNode) => {
@@ -176,5 +184,37 @@ computeForm.addEventListener("submit", (e: Event) => {
 
     values.forEach((value, id) => {
         cy.elements(`edge[target = "${id}"]`).data("value", value.toFixed(3));
+    });
+});
+
+const gradientButton = document.getElementById("gradient") as HTMLButtonElement;
+
+gradientButton.addEventListener("click", () => {
+    let grads = new Map<string, number>();
+
+    function findGradient(node: ComputationNode, propGradient: number) {
+        grads.set(node.id, propGradient);
+
+        for (let i = 0; i < node.inputs.length; i++) {
+            const child = node.inputs[i];
+            findGradient(child, propGradient * node.localGradient(i));
+        }
+    }
+
+    let session: Session = {};
+
+    variableList.forEach((varNode) => {
+        const varInput = <HTMLInputElement>(
+            document.getElementById(varNode.name + "-input")
+        );
+
+        session[varNode.name] = parseFloat(varInput.value);
+    });
+
+    comp.compute(session);
+    findGradient(comp, 1);
+
+    grads.forEach((grad, id) => {
+        cy.elements(`edge[source = "${id}"]`).data("grad", grad.toFixed(3));
     });
 });

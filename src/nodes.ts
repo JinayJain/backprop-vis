@@ -52,7 +52,7 @@ export abstract class ComputationNode {
         return total;
     }
 
-    protected abstract localGradient(idx: number): number;
+    abstract localGradient(idx: number): number;
 
     abstract toLatex(): string;
 }
