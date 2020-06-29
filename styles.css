@@ -28,6 +28,7 @@ body {
 #variables {
     padding-left: 0;
     list-style: none;
+    width: 20vw;
 }
 
 #variables li {
