@@ -2,7 +2,7 @@
 
 html,
 body {
-    background-color: #0e0a0c;
+    background-color: #eff2f1;
 }
 #cy {
     width: 100%;
@@ -14,10 +14,13 @@ body {
 }
 
 .panel {
-    color: white;
+    color: #eff2f1;
+    background-color: #4059ad;
     position: absolute;
     left: 20px;
     top: 20px;
+    padding: 20px;
+    border-radius: 10px;
     z-index: 1000;
 }
 
@@ -33,17 +36,26 @@ body {
 
 #variables li {
     margin-left: 0;
-    display: flex;
+    display: block;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     font-size: 1.5em;
 }
 
 #variables li label {
     flex: 2;
+    margin-right: 5px;
+    text-align: right;
 }
 
 #variables li input {
-    flex: 9;
-    width: 100%;
+    width: auto;
+}
+
+button {
+    background-color: #f4b942;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
 }
