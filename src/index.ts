@@ -108,8 +108,8 @@ var cy = cytoscape({
                 "text-halign": "center",
                 // @ts-ignore
                 "text-valign": "center",
-                color: "#ffffff",
-                backgroundColor: "#094d92",
+                color: "#EFF2F1",
+                backgroundColor: "#4059AD",
                 "font-size": "24px",
                 width: "label",
                 height: "label",
@@ -125,14 +125,13 @@ var cy = cytoscape({
                 "target-label": "data(grad)",
                 // @ts-ignore
                 // "source-text-rotation": "autorotate",
-                "text-background-color": "#ff00ff",
                 "font-size": 25,
-                color: "#ffffff",
+                color: "#222222",
                 width: 3,
                 // @ts-ignore
                 "curve-style": "bezier",
                 "control-point-step-size": 150,
-                "line-color": "#3E6680",
+                "line-color": "#667ABD",
                 // @ts-ignore
                 "source-arrow-shape": "triangle",
                 "source-arrow-color": "#4BB3FD",
