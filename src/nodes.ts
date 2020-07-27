@@ -162,7 +162,13 @@ export class MultiplicationNode extends ComputationNode {
     }
 
     localGradient(idx: number) {
-        return this.value / this.inputs[idx].value;
+        let prod = 1;
+        this.inputs.forEach((node, i) => {
+            if (i != idx) {
+                prod *= node.value;
+            }
+        });
+        return prod;
     }
 
     toLatex() {

@@ -4,11 +4,10 @@
     "main": "index.js",
     "scripts": {
         "dev": "nodemon",
-        "exec": "ts-node --",
         "build:ts": "tsc",
         "build": "webpack -d -w",
         "deploy": "webpack -p && gh-pages -d dist",
-        "test": "jest --verbose"
+        "test": "jest"
     },
     "license": "MIT",
     "devDependencies": {

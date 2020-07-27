@@ -8,7 +8,6 @@ import {
     VariableNode,
 } from "./nodes";
 
-// TODO: migrate simple computations to just numbers
 describe("Forward computations", () => {
     test("store singular value", () => {
         let x = new ValueNode(3);

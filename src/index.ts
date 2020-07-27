@@ -1,18 +1,20 @@
-import * as ops from "./ops";
 import cytoscape, { ElementDefinition } from "cytoscape";
 import katex from "katex";
+import { Lexer } from "./lexer";
 import {
-    Session,
-    ComputationNode,
     AdditionNode,
-    SubtractionNode,
-    MultiplicationNode,
+    ComputationNode,
     DivisionNode,
+    MultiplicationNode,
+    OutputNode,
     PowerNode,
+    Session,
+    SubtractionNode,
     ValueNode,
     VariableNode,
-    OutputNode,
 } from "./nodes";
+import * as ops from "./ops";
+import Parser from "./parser";
 
 const dagre = require("cytoscape-dagre");
 cytoscape.use(dagre);
@@ -76,15 +78,12 @@ function generateGraph(root: ComputationNode): ElementDefinition[] {
     return graph;
 }
 
+const equation: HTMLElement = document.getElementById("latex-equation")!;
 let variableList: VariableNode[] = [ops.variable("x")];
 let comp = ops.div(
     1,
     ops.add(1, ops.pow(Math.E, ops.mul(-1, variableList[0])))
 );
-
-const equation: HTMLElement = document.getElementById("equation")!;
-
-katex.render(comp.toLatex(), equation);
 
 var cy = cytoscape({
     container: document.getElementById("cy"),
@@ -141,15 +140,46 @@ var cy = cytoscape({
     ],
 });
 
-let variablesElement: HTMLElement = document.getElementById("variables")!;
-variablesElement.innerHTML = variableList
-    .map((varNode) => {
-        return `<li>
+function renderKatex(node: ComputationNode) {
+    katex.render(node.toLatex(), equation);
+}
+
+function renderVariables(varList: Array<VariableNode>) {
+    let variablesElement: HTMLElement = document.getElementById("variables")!;
+    variablesElement.innerHTML = varList
+        .map((varNode) => {
+            return `<li>
                     <label for="${varNode.name}">${varNode.name}</label>
                     <input value="0" type="number" step="any" id="${varNode.name}-input"></input>
                 </li>`;
-    })
-    .join("\n");
+        })
+        .join("\n");
+}
+
+let timeout = 0;
+let equationInput = <HTMLInputElement>document.getElementById("equation");
+equationInput.addEventListener("keyup", (ev) => {
+    clearTimeout(timeout);
+
+    timeout = <any>window.setTimeout(() => {
+        const eq = (<HTMLInputElement>ev.target).value;
+        const l = new Lexer(eq);
+        const p = new Parser(l.lex());
+        comp = p.parse();
+        variableList = p.variables;
+        renderVariables(p.variables);
+        renderKatex(comp);
+        cy.batch(() => {
+            cy.elements().remove();
+            cy.add(generateGraph(comp));
+        });
+        cy.layout({
+            name: "breadthfirst",
+            directed: true,
+            roots: "#" + comp.id,
+        }).run();
+    }, 1000);
+});
 
 const computeButton = document.getElementById("compute") as HTMLButtonElement;
 
@@ -189,7 +219,17 @@ computeButton.addEventListener("click", () => {
 const gradientButton = document.getElementById("gradient") as HTMLButtonElement;
 
 gradientButton.addEventListener("click", () => {
+    let session: Session = {};
+
+    variableList.forEach((varNode) => {
+        const varInput = <HTMLInputElement>(
+            document.getElementById(varNode.name + "-input")
+        );
+
+        session[varNode.name] = parseFloat(varInput.value);
+    });
     let grads = new Map<string, number>();
+    let value = comp.compute(session);
 
     function findGradient(node: ComputationNode, propGradient: number) {
         grads.set(node.id, propGradient);
@@ -200,20 +240,10 @@ gradientButton.addEventListener("click", () => {
         }
     }
 
-    let session: Session = {};
-
-    variableList.forEach((varNode) => {
-        const varInput = <HTMLInputElement>(
-            document.getElementById(varNode.name + "-input")
-        );
-
-        session[varNode.name] = parseFloat(varInput.value);
-    });
-
     comp.compute(session);
     findGradient(comp, 1);
 
     grads.forEach((grad, id) => {
-        cy.elements(`edge[source = "${id}"]`).data("grad", grad.toFixed(3));
+        cy.elements(`edge[target = "${id}"]`).data("grad", grad.toFixed(3));
     });
 });
