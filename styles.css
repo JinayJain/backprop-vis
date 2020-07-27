@@ -1,8 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;700&display=swap");
 
 html,
 body {
     background-color: #eff2f1;
+    box-sizing: border-box;
 }
 #cy {
     width: 100%;
@@ -26,6 +28,11 @@ body {
 
 .katex {
     font-size: 2.5em;
+}
+
+#equation {
+    width: 80%;
+    margin: 20px auto;
 }
 
 #variables {
@@ -52,10 +59,22 @@ body {
     width: auto;
 }
 
+.buttons button {
+    margin-right: 20px;
+}
+
 button {
     background-color: #f4b942;
     border: none;
     border-radius: 0.25rem;
     padding: 0.5rem 1rem;
     cursor: pointer;
+}
+
+h1,
+h2,
+h3 {
+    font-family: "Work Sans", sans-serif;
+    margin: 0.5rem;
+    text-align: center;
 }

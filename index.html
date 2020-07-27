@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Computation Graph</title>
+        <title>Backpropagation</title>
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"
@@ -15,10 +15,22 @@
     <body>
         <div id="cy"></div>
         <div class="panel">
-            <div id="equation"></div>
+            <h1 id="title">
+                Backpropagation <br />
+                Visualization
+            </h1>
+            <input
+                placeholder="Equation"
+                name="equation"
+                type="text"
+                id="equation"
+            />
+            <div id="latex-equation"></div>
             <ul id="variables"></ul>
-            <button type="button" id="compute">Compute</button>
-            <button type="button" id="gradient">Find Gradients</button>
+            <div class="buttons">
+                <button type="button" id="compute">Compute</button>
+                <button type="button" id="gradient">Find Gradients</button>
+            </div>
         </div>
         <script src="bundle.js"></script>
     </body>
