@@ -6,6 +6,7 @@ body {
     background-color: #eff2f1;
     box-sizing: border-box;
 }
+
 #cy {
     width: 100%;
     height: 100%;
@@ -28,6 +29,10 @@ body {
 
 .katex {
     font-size: 2.5em;
+}
+
+.var-label {
+    font-family: Katex_Math, serif;
 }
 
 #equation {
