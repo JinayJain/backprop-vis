@@ -12,7 +12,7 @@ To explore the flow of gradients in your computations:
     -   Ex: `5x+3`, `(3+y)^z`, `2.718^(-t)`
     -   The visualization supports addition, subtraction, multiplication, division, parenthesis, and exponents
     -   Use single-letter variable names to define your variables
-2.  Navigate the computation graph by panning across the screen by holding down your mouse
+2.  Navigate the computation graph by holding down left click to pan.
 
 3.  Insert the values you would like for each of the variables in your computation
 
