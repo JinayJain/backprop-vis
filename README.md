@@ -9,6 +9,7 @@ gradients are calculated on that expression.
 To explore the flow of gradients in your computations:
 
 1.  Input an expression into the text box and watch your computation graph automatically generate
+    -   Ex: `5x+3`, `(3+y)^z`, `2.718^(-t)`
     -   The visualization supports addition, subtraction, multiplication, division, parenthesis, and exponents
     -   Use single-letter variable names to define your variables
 2.  Navigate the computation graph by panning across the screen by holding down your mouse
