@@ -3,6 +3,7 @@
 
 html,
 body {
+    font-family: "Libre Caslon Text";
     background-color: #eff2f1;
     box-sizing: border-box;
 }
@@ -65,7 +66,7 @@ body {
 }
 
 .buttons button {
-    margin-right: 20px;
+    margin: 20px 20px 20px 0;
 }
 
 button {
@@ -82,4 +83,9 @@ h3 {
     font-family: "Work Sans", sans-serif;
     margin: 0.5rem;
     text-align: center;
+}
+
+a,
+a:visited {
+    color: white;
 }
