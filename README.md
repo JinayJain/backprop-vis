@@ -23,4 +23,6 @@ Each node in the graph transmits values to their parent nodes during forward
 propagation. During the gradient calculation step, the parents send gradients
 to their children using the chain rule. See the diagram below.
 
-![](node-flow.svg)
+<p align="center">
+  <img src="node-flow.svg">
+</p>
