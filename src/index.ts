@@ -87,7 +87,7 @@ function renderVariables(varList: Array<VariableNode>) {
     variablesElement.innerHTML = varList
         .map((varNode) => {
             return `<li>
-                    <label for="${varNode.name}">${varNode.name}</label>
+                    <label for="${varNode.name}" class="var-label">${varNode.name}</label>
                     <input value="0" type="number" step="any" id="${varNode.name}-input"></input>
                 </li>`;
         })

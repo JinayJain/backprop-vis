@@ -73,4 +73,20 @@ describe("Lexer tests", () => {
             expect(lex.lex().length).toBe(lengths[i]);
         });
     });
+
+    test("Negative numbers", () => {
+        const tests = ["-5", "-x", "--y"];
+        const expected = [
+            [TokenType.SUB, TokenType.NUM],
+            [TokenType.SUB, TokenType.VAR],
+            [TokenType.SUB, TokenType.SUB, TokenType.VAR],
+        ];
+
+        tests.forEach((t, i) => {
+            const lex = new Lexer(t);
+            const result = lex.lex();
+            expect(result.length).toBe(expected[i].length);
+            expect(result.map((tok) => tok.type)).toEqual(expected[i]);
+        });
+    });
 });

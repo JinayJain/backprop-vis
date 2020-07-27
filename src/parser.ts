@@ -75,10 +75,9 @@ export default class Parser {
     }
 
     pow(): ComputationNode {
-        let expr = this.primary();
+        let expr = this.unary();
 
         while (this.match(TokenType.POW)) {
-            const prev = this.tokens[this.pos - 1];
             const right = this.unary();
             expr = new PowerNode(expr, right);
         }

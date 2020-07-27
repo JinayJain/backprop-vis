@@ -72,4 +72,15 @@ describe("Parser tests", () => {
             expect(parser.parse().compute()).toBeCloseTo(expected[i]);
         });
     });
+
+    test("Negative values", () => {
+        const tests = ["-1", "--5", "(-5 + 3)"];
+        const expected = [-1, 5, -2];
+        tests.forEach((t, i) => {
+            const l = new Lexer(t);
+            const p = new Parser(l.lex());
+            const result = p.parse();
+            expect(result.compute()).toBeCloseTo(expected[i]);
+        });
+    });
 });
