@@ -1,4 +1,4 @@
-# Backpropagation Visualization
+# [Backpropagation Visualization](https://jinay.dev/backprop-vis)
 
 A simple tool to help visualize the use of backpropagation on a computation
 graph. Shows the computation graph given any expression and demonstrates how
