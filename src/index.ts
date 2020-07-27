@@ -78,12 +78,31 @@ function generateGraph(root: ComputationNode): ElementDefinition[] {
     return graph;
 }
 
+function renderKatex(node: ComputationNode) {
+    katex.render(node.toLatex(), equation);
+}
+
+function renderVariables(varList: Array<VariableNode>) {
+    let variablesElement: HTMLElement = document.getElementById("variables")!;
+    variablesElement.innerHTML = varList
+        .map((varNode) => {
+            return `<li>
+                    <label for="${varNode.name}">${varNode.name}</label>
+                    <input value="0" type="number" step="any" id="${varNode.name}-input"></input>
+                </li>`;
+        })
+        .join("\n");
+}
+
 const equation: HTMLElement = document.getElementById("latex-equation")!;
 let variableList: VariableNode[] = [ops.variable("x")];
 let comp = ops.div(
     1,
     ops.add(1, ops.pow(Math.E, ops.mul(-1, variableList[0])))
 );
+
+renderKatex(comp);
+renderVariables(variableList);
 
 var cy = cytoscape({
     container: document.getElementById("cy"),
@@ -139,22 +158,6 @@ var cy = cytoscape({
         },
     ],
 });
-
-function renderKatex(node: ComputationNode) {
-    katex.render(node.toLatex(), equation);
-}
-
-function renderVariables(varList: Array<VariableNode>) {
-    let variablesElement: HTMLElement = document.getElementById("variables")!;
-    variablesElement.innerHTML = varList
-        .map((varNode) => {
-            return `<li>
-                    <label for="${varNode.name}">${varNode.name}</label>
-                    <input value="0" type="number" step="any" id="${varNode.name}-input"></input>
-                </li>`;
-        })
-        .join("\n");
-}
 
 let timeout = 0;
 let equationInput = <HTMLInputElement>document.getElementById("equation");
