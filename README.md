@@ -27,5 +27,3 @@ to their children using the chain rule. See the diagram below.
 <p align="center">
   <img src="node-flow.svg">
 </p>
-
-_Try inputting `1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1` for a LaTeX tree_
