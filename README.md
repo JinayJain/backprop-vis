@@ -4,6 +4,8 @@ A simple tool to help visualize the use of backpropagation on a computation
 graph. Shows the computation graph given any expression and demonstrates how
 gradients are calculated on that expression.
 
+For more information, view the [blog post](https://blog.jinay.dev/posts/backprop/) I wrote related to this project.
+
 ## Usage
 
 To explore the flow of gradients in your computations:
