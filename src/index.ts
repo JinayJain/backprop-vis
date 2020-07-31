@@ -78,8 +78,8 @@ function generateGraph(root: ComputationNode): ElementDefinition[] {
     return graph;
 }
 
-function renderKatex(node: ComputationNode) {
-    katex.render(node.toLatex(), equation);
+function renderKatex(value: string) {
+    katex.render(value, equation);
 }
 
 function renderVariables(varList: Array<VariableNode>) {
@@ -101,7 +101,7 @@ let comp = ops.div(
     ops.add(1, ops.pow(Math.E, ops.mul(-1, variableList[0])))
 );
 
-renderKatex(comp);
+renderKatex(comp.toLatex());
 renderVariables(variableList);
 
 var cy = cytoscape({
@@ -168,10 +168,16 @@ equationInput.addEventListener("keyup", (ev) => {
         const eq = (<HTMLInputElement>ev.target).value;
         const l = new Lexer(eq);
         const p = new Parser(l.lex());
+        console.log(p.error, l.error);
+
+        if (l.error || p.error) {
+            renderKatex("error");
+            return;
+        }
         comp = p.parse();
         variableList = p.variables;
         renderVariables(p.variables);
-        renderKatex(comp);
+        renderKatex(comp.toLatex());
         cy.batch(() => {
             cy.elements().remove();
             cy.add(generateGraph(comp));
