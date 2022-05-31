@@ -1,5 +1,7 @@
 # [Backpropagation Visualization](https://jinay.dev/backprop-vis)
 
+![](assets/screenshot.png)
+
 A simple tool to help visualize the use of backpropagation on a computation
 graph. Shows the computation graph given any expression and demonstrates how
 gradients are calculated on that expression.
